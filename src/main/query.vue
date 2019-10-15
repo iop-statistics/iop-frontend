@@ -21,15 +21,15 @@ thead th {
       <table class="table">
         <thead>
           <tr>
-            <th>{{$t('query.order')}}</th>
-            <th>{{$t('query.mp')}}</th>
-            <th>{{$t('query.amm')}}</th>
-            <th>{{$t('query.mre')}}</th>
-            <th>{{$t('query.part')}}</th>
-            <th>{{$t('query.tier')}}</th>
-            <th>{{$t('query.hits')}}</th>
-            <th>{{$t('query.attempt')}}</th>
-            <th>{{$t('query.rate')}}</th>
+            <th @click="changeSort(0)">{{$t('query.order')}}</th>
+            <th @click="changeSort(1)">{{$t('query.mp')}}</th>
+            <th @click="changeSort(2)">{{$t('query.amm')}}</th>
+            <th @click="changeSort(3)">{{$t('query.mre')}}</th>
+            <th @click="changeSort(4)">{{$t('query.part')}}</th>
+            <th @click="changeSort(5)">{{$t('query.tier')}}</th>
+            <th @click="changeSort(6)">{{$t('query.hits')}}</th>
+            <th @click="changeSort(7)">{{$t('query.attempt')}}</th>
+            <th @click="changeSort(8)">{{$t('query.rate')}}</th>
           </tr>
         </thead>
         <tbody>
@@ -49,14 +49,8 @@ import comment from "./comment.vue";
 export default {
   data() {
     return {
-      received: {
-        mp: 130,
-        ammo: 130,
-        mre: 130,
-        part: 130,
-        type: "tdoll"
-      },
-      query_obj: {}
+      query_obj: {},
+      sort: { current: 7, order: 0 }
     };
   },
   components: {
@@ -73,9 +67,37 @@ export default {
         return;
       }
       this.query_obj = this.$dic[this.$query_obj.cat][this.$query_obj.id];
+    },
+
+    changeSort(code) {
+      if (code == this.sort.current) {
+        this.sort.order ^= 1;
+      } else {
+        this.sort.current = code;
+        this.sort.order = 0;
+      }
+    },
+
+    reSort() {},
+
+    timeQuery() {
+      //time query only enabled here
+    },
+
+    toFormula() {
+      this.$router.push({ path: "/query_formula" });
     }
   },
 
+  watch: {
+    reSortTrigger() {}
+  },
+  computed: {
+    reSortTrigger() {
+      const { current, order } = this.sort;
+      return { current, order };
+    }
+  },
   created() {
     this.checkUrl();
 

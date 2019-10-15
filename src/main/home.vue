@@ -241,6 +241,14 @@ export default {
     this.getGunInfo();
     this.getEquipInfo();
     this.getFairyInfo();
+    // console.log("test api");
+    // this.$ajax
+    //   .get(
+    //     "http://db.baka.pw:8898/stats/formula?mp=130&ammo=130&mre=130&part=130&type=tdoll"
+    //   )
+    //   .then(res => {
+    //     console.log(res);
+    //   });
     // console.log(this.$dic);
     // console.log(JSON.parse(JSON.stringify(this.home_info.equip.acc[0])));
     // console.log(this.home_info.equip.acc);

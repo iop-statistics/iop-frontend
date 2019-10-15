@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
 import query from '../main/query.vue'
 import home from '../main/home.vue'
-import query_formula from '../main/query_formula.vue'
+import query_formula from '../main/queryFormula.vue'
 
 var router = new VueRouter({
   routes: [
