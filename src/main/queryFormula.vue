@@ -1,25 +1,30 @@
-<style lang="">
+<style scoped>
+* {
+  font-weight: 400;
+}
 </style>
 
 <template>
   <div>
     <div class="container">
       <!-- <h1>{{this.$route.query}}</h1> -->
-      <div>
-        <h5>{{query_obj.cn_name+' '+$t('query.time')}}</h5>
-      </div>
+      <div></div>
       <table class="table">
         <thead>
           <tr>
-            <th>{{$t('query.order')}}</th>
-            <th>{{$t('query.mp')}}</th>
-            <th>{{$t('query.amm')}}</th>
-            <th>{{$t('query.mre')}}</th>
-            <th>{{$t('query.part')}}</th>
-            <th>{{$t('query.tier')}}</th>
-            <th>{{$t('query.hits')}}</th>
-            <th>{{$t('query.attempt')}}</th>
-            <th>{{$t('query.rate')}}</th>
+            <th>{{$t('query_formula.order')}}</th>
+            <th>{{$t('query_formula.tdoll_order')}}</th>
+            <th>{{$t('query_formula.rank')}}</th>
+            <th>{{$t('query_formula.tdoll')}}</th>
+            <th>{{$t('query_formula.dev_time')}}</th>
+            <th>{{$t('query_formula.mp')}}</th>
+            <th>{{$t('query_formula.amm')}}</th>
+            <th>{{$t('query_formula.mre')}}</th>
+            <th>{{$t('query_formula.part')}}</th>
+            <th>{{$t('query_formula.tier')}}</th>
+            <th>{{$t('query_formula.hits')}}</th>
+            <!-- <th>{{$t('query_formula.attempt')}}</th> -->
+            <th>{{$t('query_formula.rate')}}</th>
           </tr>
         </thead>
         <tbody>
@@ -69,19 +74,10 @@ export default {
       this.$router.push({ path: "/query" });
     }
   },
-  computed: {
-    // uniformed() {
-    //   let _this = this;
-    //   let temp = "";
-    //   for (var key in _this.received) {
-    //     temp = temp + key + "=" + _this.received[key] + "&";
-    //   }
-    //   return temp.slice(0, temp.length - 1);
-    // }
-  },
+  computed: {},
   created() {
     // console.log(this.$route);
-    this.checkUrl();
+    // this.checkUrl();
   }
 };
 </script>

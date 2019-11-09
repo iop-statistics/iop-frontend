@@ -55,14 +55,14 @@ axios.interceptors.response.use(response => {
     msg = 'ajax Intercept errors----------------->' + '\n\n' + 'errorMessage：' + err.message
   }
   // message.err(err.message)
-  alert(msg)
+  console.log(msg)
   return Promise.resolve(err.response)
 })
 
 // http://hk.commonspace.com.au:8080/outdoor/          香港生产
 // https://syd.commonspace.com.au/                     悉尼生产https
 
-// axios.defaults.baseURL = 'localhost'
+axios.defaults.baseURL = 'http://db.baka.pw:8898'
 // axios.defaults.withCredentials = true //意思是携带cookie信息,保持session的一致性
 // 设置默认请求头
 axios.defaults.headers = {
@@ -78,6 +78,10 @@ export default {
         method: 'get',
         url,
         params: param,
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded'
+        },
+        withCredentials: false,
         cancelToken: new CancelToken(c => {
           cancel = c
         })

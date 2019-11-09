@@ -50,7 +50,7 @@ module.exports = {
     //   filename: "[name].[contenthash].css",
     //   chunkFilename: "[name].[contenthash].css"
     // }),
-    // new OptimizeCSSAssetsPlugin()
+    new OptimizeCSSAssetsPlugin()
   ],
   module: {
     rules: [
@@ -97,10 +97,11 @@ module.exports = {
   /******************************/
   // externals: {
   //   'vue': 'Vue',
+  //   'vuex': 'Vuex',
+  //   'vue2-datepicker': 'DatePicker',
   //   'vue-router': 'VueRouter',
   //   'jquery': 'jQuery',
   //   'vue-i18n': 'VueI18n',
   //   'bootstrap': 'jQuery'
-
   // }
 };

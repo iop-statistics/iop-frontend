@@ -90,13 +90,14 @@ h5 {
 </template>
 
 <script>
+import { reject } from "q";
 export default {
   name: "home",
   data() {
     return {
       notice: {},
       home_info: {
-        t_doll: {
+        tdoll: {
           hg: [],
           smg: [],
           rf: [],
@@ -117,135 +118,147 @@ export default {
     };
   },
   methods: {
-    getGunInfo() {
-      this.$ajax.get("../sample_data/gun_info.json").then(response => {
-        if (response.status === 200) {
-          this.$dic.t_doll = {};
-          response.data
-            .filter(a => a.id < 1000)
-            .sort((a, b) => a.type - b.type || a.rank - b.rank)
-            .forEach(ele => {
-              let temp = JSON.parse(JSON.stringify(ele));
-              let temp1 = JSON.parse(JSON.stringify(ele));
-              this.$dic.t_doll[temp1.id] = temp1;
-              temp.cn_name = temp.cn_name + " | " + temp.code;
-              switch (temp.type) {
-                case 1:
-                  this.home_info.t_doll.hg.push(temp);
-                  break;
-                case 2:
-                  this.home_info.t_doll.smg.push(temp);
-                  break;
-                case 3:
-                  this.home_info.t_doll.rf.push(temp);
-                  break;
-                case 4:
-                  this.home_info.t_doll.ar.push(temp);
-                  break;
-                case 5:
-                  this.home_info.t_doll.mg.push(temp);
-                  break;
-                case 6:
-                  this.home_info.t_doll.sg.push(temp);
-                  break;
-              }
-            });
-        }
-      });
-    },
-    getEquipInfo() {
-      var re = new RegExp("（|）");
-      var re_c = new RegExp("16Lab");
-      this.$ajax.get("../sample_data/equip_info.json").then(response => {
-        if (response.status === 200) {
-          this.$dic.equip = {};
-          response.data
-            .filter(
-              a =>
-                a.id < 100 &&
-                a.develop_duration < 3600 &&
-                !re_c.test(a.company) &&
-                a.company
-            )
-            .sort((a, b) => a.category - b.category || a.rank - b.rank)
-            .forEach(ele => {
-              let temp = JSON.parse(JSON.stringify(ele));
-              this.$dic.equip[temp.id] = temp;
-              switch (temp.category) {
-                case "1":
-                  this.home_info.equip.acc.push(temp);
-                  break;
-                case "2":
-                  if (!re.test(temp.cn_name)) {
-                    this.home_info.equip.mag.push(temp);
-                  }
-                  break;
-                case "3":
-                  this.home_info.equip.ske.push(temp);
-                  break;
-              }
-            });
-        }
-      });
-      // console.log(this.home_info.equip.acc);
-    },
-    getFairyInfo() {
-      this.$ajax.get("../sample_data/fairy_info.json").then(response => {
-        if (response.status === 200) {
-          this.$dic.fairy = {};
-          response.data
-            .filter(a => a.id < 1000)
-            .sort((a, b) => a.category - b.category || a.id - b.id)
-            .forEach(ele => {
-              let temp = JSON.parse(JSON.stringify(ele));
-              temp.rank = parseInt(temp.category) + 5;
-              this.$dic.fairy[temp.id] = temp;
-              switch (temp.category) {
-                case "1":
-                  this.home_info.fairy.bat.push(temp);
-                  break;
-                case "2":
-                  this.home_info.fairy.tac.push(temp);
-                  break;
-              }
-            });
-        }
-      });
-    },
-    getNotification() {
-      this.$ajax.get("../sample_data/info.json").then(response => {
-        if (response.status === 200) {
-          this.notice = response.data;
-          let date = new Date(this.notice.last_update * 1000);
-          this.notice.last_update =
-            " " +
-            date
-              .toLocaleDateString()
-              .split("/")
-              .reverse()
-              .join("-") +
-            " " +
-            date.toLocaleTimeString();
-        }
-      });
-    },
     performQuery(cate, ide) {
       // this.$query_obj.cat = cate;
       // this.$query_obj.id = ide;
-      Object.assign(this.$query_obj, { cat: cate, id: ide });
-      this.$router.push({ path: "/query" });
+      // Object.assign(this.$query_obj, { cat: cate, id: ide });
+      this.$router.push({ path: `/query?type=${cate}&id=${ide}` });
+    },
+
+    installInfo() {
+      this.notice = this.$store.state.dic.info;
+    },
+
+    installGun() {
+      Object.values(this.$store.state.dic.tdoll).forEach(ele => {
+        ele.cn_name = ele.cn_name + " | " + ele.code;
+        switch (ele.type) {
+          case 1:
+            this.home_info.tdoll.hg.push(ele);
+            break;
+          case 2:
+            this.home_info.tdoll.smg.push(ele);
+            break;
+          case 3:
+            this.home_info.tdoll.rf.push(ele);
+            break;
+          case 4:
+            this.home_info.tdoll.ar.push(ele);
+            break;
+          case 5:
+            this.home_info.tdoll.mg.push(ele);
+            break;
+          case 6:
+            this.home_info.tdoll.sg.push(ele);
+            break;
+        }
+      });
+      Object.values(this.home_info.tdoll).forEach(ele => {
+        ele = ele.sort((a, b) => a.type - b.type || a.rank - b.rank);
+      });
+    },
+
+    installEquip() {
+      var re = new RegExp("（|）");
+      Object.values(this.$store.state.dic.equip).forEach(ele => {
+        switch (ele.category) {
+          case "1":
+            this.home_info.equip.acc.push(ele);
+            break;
+          case "2":
+            if (!re.test(ele.cn_name)) {
+              this.home_info.equip.mag.push(ele);
+            }
+            break;
+          case "3":
+            this.home_info.equip.ske.push(ele);
+            break;
+        }
+      });
+      Object.values(this.home_info.equip).forEach(ele => {
+        ele = ele.sort((a, b) => a.category - b.category || a.rank - b.rank);
+      });
+    },
+
+    installFairy() {
+      Object.values(this.$store.state.dic.fairy).forEach(ele => {
+        switch (ele.category) {
+          case "1":
+            this.home_info.fairy.bat.push(ele);
+            break;
+          case "2":
+            this.home_info.fairy.tac.push(ele);
+            break;
+        }
+      });
+      Object.values(this.home_info.fairy).forEach(ele => {
+        ele = ele.sort((a, b) => a.category - b.category || a.id - b.id);
+      });
+    }
+  },
+  watch: {
+    infoTrigger(newVal) {
+      if (newVal == 1) {
+        this.notice = this.$store.state.dic.info;
+      }
+    },
+    gunTrigger(newVal) {
+      if (newVal == 1) {
+        this.installGun();
+      }
+    },
+    equipTrigger(newVal) {
+      if (newVal == 1) {
+        this.installEquip();
+      }
+    },
+
+    fairyTrigger(newVal) {
+      if (newVal == 1) {
+        this.installFairy();
+      }
+    }
+  },
+  computed: {
+    infoTrigger() {
+      return this.$store.state.flag.info;
+    },
+    gunTrigger() {
+      return this.$store.state.flag.tdoll;
+    },
+    equipTrigger() {
+      return this.$store.state.flag.equip;
+    },
+    fairyTrigger() {
+      return this.$store.state.flag.fairy;
     }
   },
   created() {
-    this.getNotification();
-    this.getGunInfo();
-    this.getEquipInfo();
-    this.getFairyInfo();
+    var _this = this;
+    // var promise = new Promise((resolve, reject) => {
+    //   if (!_this.$store.state.flag.info) {
+    //     _this.$getInfo();
+    //   }
+    //   resolve("complete");
+    // });
+    // promise.then(res => {
+    //   _this.$getGunInfo();
+    //   _this.$getEquipInfo();
+    // });
+    this.$getInfo().then(res => {
+      this.$getGunInfo();
+      this.$getEquipInfo();
+      this.$getFairyInfo();
+    });
+    // this.$getGunInfo();
+    // this.$getEquipInfo();
+    // this.$getFairyInfo();
     // console.log("test api");
     // this.$ajax
-    //   .get(
-    //     "http://db.baka.pw:8898/stats/formula?mp=130&ammo=130&mre=130&part=130&type=tdoll"
-    //   )
+    //   // .get(
+    //   //   "http://db.baka.pw:8898/stats/formula?mp=130&ammo=130&mre=130&part=130&type=tdoll"
+    //   // )
+    //   .get('/json/equip_info_simple.json')
     //   .then(res => {
     //     console.log(res);
     //   });
