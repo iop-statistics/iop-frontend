@@ -5,7 +5,7 @@
   margin-bottom: 10px;
 }
 #mutiLang .btn {
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 .navbar-brand img {
   width: 40px;
@@ -22,15 +22,23 @@
       <div class="container">
         <!-- <div class="row"> -->
         <router-link to="/" class="navbar-brand">
-          <img src="../img/iop.jpg" alt srcset />
+          <img src="../assets/iop.jpg" alt srcset />
           <!-- <span>IOP公司出货统计3.5 BETA</span> -->
           <span>{{$t("app.header")}}</span>
         </router-link>
         <!-- </div> -->
       </div>
     </header>
-    <div id="mutiLang" class="container">
-      <div class="row justify-content-end">
+    <div id="mutiLang" class="container py-3">
+      <div class="row justify-content-between">
+        <div class="btn-group btn-group-toggle">
+          <router-link
+            to="/home"
+            class="btn btn-secondary"
+            tag="button"
+            v-if="$route.fullPath!='/home'"
+          ><返回首页</router-link>
+        </div>
         <div class="btn-group btn-group-toggle">
           <label class="btn btn-secondary" :class="{'active': langFlag==1}" @click="langFlag=1">
             <input type="radio" name="options" id="option1" autocomplete="off" /> 简体中文

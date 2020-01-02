@@ -7,8 +7,8 @@ var router = new VueRouter({
   routes: [
     { path: '/', redirect: '/home' },
     { path: '/home', name: 'home', component: home },
-    { path: '/query', name: 'query', component: query },
-    { path: '/query_formula', name: 'query_formula', component: query_formula },
+    { path: '/id', name: 'query', component: query },
+    { path: '/formula', name: 'query_formula', component: query_formula },
     { path: '*', redirect: '/home' },
   ]
 })

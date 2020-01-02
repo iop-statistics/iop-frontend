@@ -2,19 +2,29 @@
 * {
   font-weight: 400;
 }
-thead th {
+thead th,
+tbody tr {
   cursor: pointer;
 }
 .table thead th {
   border-top: 0px;
   border-bottom-width: 1px;
 }
+
+td,
+th {
+  text-align: center;
+}
+
+tbody tr:hover,
+thead tr th:hover {
+  background: #f5f5f5;
+}
 </style>
 
 <template>
   <div>
     <div class="container">
-      <!-- <h1>{{this.$route.query}}</h1> -->
       <div class="pb-4">
         <div>
           <h4 class="pb-3">{{cn_name +' '+$t('query.time')}}</h4>
@@ -76,15 +86,15 @@ thead th {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(ele,i) in sorted_data" :key="i" @click="toFormula([ele.type,ele.formula])">
+          <tr v-for="(ele,i) in sorted_data" :key="i" @click="toFormula(ele.total,ele.formula)">
             <td>{{i+1}}</td>
             <td>{{ele.formula.mp}}</td>
             <td>{{ele.formula.ammo}}</td>
             <td>{{ele.formula.mre}}</td>
             <td>{{ele.formula.part}}</td>
             <td>{{ele.formula.input_level}}</td>
-            <td>{{ele.total}}</td>
             <td>{{ele.count}}</td>
+            <td>{{ele.total}}</td>
             <td>{{ele.rate+'%'}}</td>
           </tr>
         </tbody>
@@ -101,13 +111,14 @@ thead th {
 
 import comment from "./comment.vue";
 import DatePicker from "vue2-datepicker";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       data: {},
       sorted_data: {},
       date_span: [],
-      today: "",
+      // today: "",
       sort: { current: 7, order: -1 },
       filterFlag: 3
     };
@@ -118,40 +129,42 @@ export default {
   },
   methods: {
     checkUrl() {
-      if (
-        this.$query_obj.id == 0 ||
-        !this.$query_obj.cat ||
-        !this.$router.fullpath === "/query"
-      ) {
+      if (this.$route.fullPath != "/id" || this.checkPara()) {
         this.$router.push({ path: "/home" });
         return;
       }
-      this.query_obj = this.$dic[this.$query_obj.cat][this.$query_obj.id];
     },
 
-    getStandardDate() {
-      this.$ajax
-        .get("http://quan.suning.com/getSysTime.do")
-        .then(res => {
-          this.today = new Date(res.data.sysTime2.split(" ")[0] + "GMT+0800");
-        })
-        .catch(err => {
-          this.today = new Date();
-        });
+    checkPara() {
+      var { type, id } = this.queryID;
+      try {
+        if (type === "tdoll" || type === "fairy" || type === "equip") {
+          if (typeof id === "number" && id > 0) {
+            return false;
+          }
+        }
+      } catch (error) {
+        return true;
+      }
+      return true; //true means corrupted data
     },
 
     queryFormula() {
       var _this = this;
       this.$ajax
-        .get(
-          `/stats/id?type=${_this.$route.query.type}&id=${_this.$route.query.id}`
-        )
+        .get("/stats/id", {
+          type: this.queryID.type,
+          id: this.queryID.id
+        })
         .then(res => {
+          if (res == undefined) {
+            return;
+          }
           if (res.status == 200) {
-            this.data = res.data;
+            this.data = res.data.data.data;
             this.data.forEach(ele => {
               Object.assign(ele, {
-                rate: new Number((ele.total / ele.count) * 100).toFixed(3)
+                rate: new Number((ele.count / ele.total) * 100).toFixed(3)
               });
             });
             this.sorted_data = Array.from(this.data);
@@ -162,9 +175,12 @@ export default {
     queryTime() {
       var _this = this;
       //time query only enabled here
-      var type = this.$route.query.type;
-      var id = this.$route.query.id;
-      if (this.date_span.length < 2) {
+      var { type, id } = this.queryID;
+      if (
+        this.date_span.length < 2 ||
+        this.date_span[0] == null ||
+        this.data[1] == null
+      ) {
         return;
       } else {
         var from =
@@ -184,12 +200,13 @@ export default {
         this.$ajax
           .get("/stats/id", param)
           .then(res => {
+            // console.log(res);
             if (res.status == 200) {
-              this.data = res.data;
+              this.data = res.data.data.data;
               this.reSort();
               return 1;
             }
-            console.log(res.status);
+            // console.log(res.status);
           })
           .catch(err => console.log(err));
       }
@@ -270,20 +287,19 @@ export default {
       }
     },
 
-    toFormula(param) {
-      var type = parseInt(param[0]) == 0 ? "tdoll" : "equip";
-      var { mp, ammo, mre, part, input_level } = param[1];
-      this.$router.push({
-        path: "/query_formula",
-        query: {
-          type,
-          mp,
-          ammo,
-          mre,
-          part,
-          input_level
-        }
+    toFormula(total, param) {
+      var type = this.queryID.type === "tdoll" ? "tdoll" : "equip";
+      var { mp, ammo, mre, part, input_level } = param;
+      this.$store.commit("setCurrentTotal", total);
+      this.$store.commit("setQueryFormula", {
+        type,
+        mp,
+        ammo,
+        mre,
+        part,
+        input_level
       });
+      this.$router.push({ path: "/formula" });
     },
 
     parseDevSec(sec) {
@@ -307,6 +323,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(["today", "queryID"]),
     reSortTrigger() {
       const { current, order } = this.sort;
       return { current, order };
@@ -314,9 +331,9 @@ export default {
 
     cn_name() {
       try {
-        return this.$store.state.dic[this.$route.query.type][
-          this.$route.query.id
-        ]["cn_name"];
+        return this.$store.state.dic[this.queryID.type][this.queryID.id][
+          "cn_name"
+        ];
       } catch {
         return "";
       }
@@ -325,7 +342,7 @@ export default {
     dev_time() {
       try {
         return this.parseDevSec(
-          this.$store.state.dic[this.$route.query.type][this.$route.query.id][
+          this.$store.state.dic[this.queryID.type][this.queryID.id][
             "develop_duration"
           ]
         )
@@ -339,21 +356,26 @@ export default {
     }
   },
   created() {
-    this.getStandardDate();
-    this.$getInfo()
-      .then(res => {
-        this.$getGunInfo();
-        this.$getEquipInfo();
-        this.$getFairyInfo();
-        return 1;
-      })
-      .then(res => {
-        this.queryFormula();
-      });
+    // this.getStandardDate();
+    // this.$getStandardDate();
+    // this.$getInfo()
+    //   .then(res => {
+    //     this.$getGunInfo();
+    //     this.$getEquipInfo();
+    //     this.$getFairyInfo();
+    //     return 1;
+    //   })
+    //   .then(res => {
+    //     this.queryFormula();
+    //   });
     // console.log(this.$store.state.dic);
-    // this.checkUrl();
+    this.checkUrl();
+    this.queryFormula();
     // console.log(this.$query_obj);
   }
+  // activated() {
+  //   this.queryFormula();
+  // }
 };
 </script>
 

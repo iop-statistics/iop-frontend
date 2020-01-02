@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-let cancel, promiseArr = {}
+var cancel, promiseArr = {}
 const CancelToken = axios.CancelToken;
 
 axios.interceptors.response.use(response => {
@@ -59,8 +59,6 @@ axios.interceptors.response.use(response => {
   return Promise.resolve(err.response)
 })
 
-// http://hk.commonspace.com.au:8080/outdoor/          香港生产
-// https://syd.commonspace.com.au/                     悉尼生产https
 
 axios.defaults.baseURL = 'http://db.baka.pw:8898'
 // axios.defaults.withCredentials = true //意思是携带cookie信息,保持session的一致性

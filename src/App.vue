@@ -2,7 +2,7 @@
   <div class="container-fluid" style="padding:0px;min-height:100%;position:relative">
     <pageHeader></pageHeader>
     <keep-alive include="home">
-      <router-view style="padding-bottom:130px"></router-view>
+      <router-view style="padding-bottom:141px"></router-view>
     </keep-alive>
     <pageFooter style="position: absolute;bottom: 0;width: 100%;"></pageFooter>
   </div>

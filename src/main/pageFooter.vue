@@ -2,6 +2,11 @@
 .link a {
   font-size: 1rem;
 }
+
+.grey {
+  font-size: 12px;
+  color: #999;
+}
 @media (min-width: 768px) {
   .modal-dialog {
     max-width: 600px;
@@ -21,7 +26,15 @@
       </div>
       <hr />
       <!-- Button trigger modal -->
-      <a href="javascript:void(0);" data-toggle="modal" data-target="#modelId">关于本站</a>
+      <div class="row justify-content-between">
+        <div>
+          <a href="javascript:void(0);" data-toggle="modal" data-target="#modelId">关于本站</a>
+        </div>
+        <div>
+          <p class="m-0 grey">Powered by GFDB</p>
+          <p class="m-0 grey">只做了一点微小的工作</p>
+        </div>
+      </div>
       <!--type="button" class="btn btn-primary btn-lg" -->
 
       <!-- Modal -->
@@ -42,6 +55,22 @@
               </button>
             </div>
             <div class="modal-body">
+              <div>
+                <p>Data collected by GFDB.</p>
+                <br />
+                <p>Server and database by: Lyt99</p>
+                <p>Webpage and UI by: c丶cu, windamin</p>
+                <p>English version by : Pianoforte</p>
+                <p>Korean version by : SooMAE, BlumeX Anon</p>
+                <p>
+                  Japanese version by :
+                  <a
+                    href="https://wiki.gamerclub.jp/dfwiki/index.php"
+                    class="ng-binding"
+                  >DFwiki&amp;Gamerclub.jp</a>
+                </p>
+                <br />
+              </div>
               <div>{{$t('home.conditions')}}</div>
             </div>
           </div>

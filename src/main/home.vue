@@ -122,7 +122,8 @@ export default {
       // this.$query_obj.cat = cate;
       // this.$query_obj.id = ide;
       // Object.assign(this.$query_obj, { cat: cate, id: ide });
-      this.$router.push({ path: `/query?type=${cate}&id=${ide}` });
+      this.$store.commit("setQueryID", { type: cate, id: ide });
+      this.$router.push({ path: "/id" });
     },
 
     installInfo() {
@@ -245,6 +246,7 @@ export default {
     //   _this.$getGunInfo();
     //   _this.$getEquipInfo();
     // });
+    this.$getStandardDate();
     this.$getInfo().then(res => {
       this.$getGunInfo();
       this.$getEquipInfo();
@@ -255,10 +257,10 @@ export default {
     // this.$getFairyInfo();
     // console.log("test api");
     // this.$ajax
-    //   // .get(
-    //   //   "http://db.baka.pw:8898/stats/formula?mp=130&ammo=130&mre=130&part=130&type=tdoll"
-    //   // )
-    //   .get('/json/equip_info_simple.json')
+    //   .get(
+    //     "http://db.baka.pw:8898/stats/formula?mp=130&ammo=130&mre=130&part=130&type=tdoll"
+    //   )
+    //   // .get('/json/equip_info_simple.json')
     //   .then(res => {
     //     console.log(res);
     //   });

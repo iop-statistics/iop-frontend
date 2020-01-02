@@ -95,7 +95,7 @@ export default {
       var info = {}
       return this.$ajax.get("/stats/info").then(response => {
         if (response.status === 200) {
-          info = response.data;
+          info = response.data.data;
           let date = new Date(info.last_update * 1000);
           info.last_update =
             " " +
@@ -114,6 +114,18 @@ export default {
           content: info,
         })
       }).catch(err => { console.log('error in fetching data from info') });
+    };
+
+    Vue.prototype.$getStandardDate = function () {
+
+      this.$ajax.get("http://quan.suning.com/getSysTime.do")
+        .then(res => {
+          this.$store.commit('setToday', new Date(res.data.sysTime2.split(" ")[0] + "GMT+0800"))
+          // console.log(today)
+        })
+        .catch(err => {
+          this.$store.commit('setToday', new Date());
+        });
     }
   }
 }

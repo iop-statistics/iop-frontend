@@ -43,6 +43,8 @@ module.exports = {
     search: '查询'
   },
   query_formula: {
+    tier: '档的出货统计数据',
+    total: '共查询到{msg}条数据.',
     order: '序号',
     tdoll_order: '人形 No.',
     equip_order: '装备 No.',
@@ -50,11 +52,6 @@ module.exports = {
     tdoll: '人形',
     equip: '装备',
     dev_time: '建造时间',
-    mp: '人力',
-    amm: '弹药',
-    mre: '口粮',
-    part: '零件',
-    tier: '档位',
     hits: '出货数',
     rate: '出货率',
   }
