@@ -10,8 +10,8 @@ import http from './tools/http.js'
 import requestBundle from './tools/global_request.js'
 // import 'bootstrap'
 /******************************/
-import 'bootstrap/dist/js/bootstrap.js'
-import 'bootstrap/dist/css/bootstrap.css'
+// import 'bootstrap/dist/js/bootstrap.js'
+// import 'bootstrap/dist/css/bootstrap.css'
 import './assets/icon.css'
 
 

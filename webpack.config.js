@@ -4,15 +4,16 @@ const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CompressionPlugin = require("compression-webpack-plugin");
 // --mode=development;
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 
 module.exports = {
-  mode: 'development',
+  // mode: 'development',
   /******************************/
-  // mode: 'production',
+  mode: 'production',
   devtool: 'cheap-module-source-map',
   entry: path.join(__dirname, './src/main.js'),
   output: {
@@ -46,11 +47,22 @@ module.exports = {
     }),
     new BundleAnalyzerPlugin(),
     /******************************/
-    // new MiniCssExtractPlugin({
-    //   filename: "[name].[contenthash].css",
-    //   chunkFilename: "[name].[contenthash].css"
-    // }),
-    new OptimizeCSSAssetsPlugin()
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash].css",
+      chunkFilename: "[name].[contenthash].css"
+    }),
+    new OptimizeCSSAssetsPlugin(),
+
+    new CompressionPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',//算法
+      test: new RegExp(
+        '\\.(js|css)$'  //压缩 js 与 css
+      ),
+      threshold: 10240,//只处理比这个值大的资源。按字节计算
+      minRatio: 0.8//只有压缩率比这个值小的资源才会被处理
+    })
+
   ],
   module: {
     rules: [
@@ -95,13 +107,13 @@ module.exports = {
     }
   },
   /******************************/
-  // externals: {
-  //   'vue': 'Vue',
-  //   'vuex': 'Vuex',
-  //   'vue2-datepicker': 'DatePicker',
-  //   'vue-router': 'VueRouter',
-  //   'jquery': 'jQuery',
-  //   'vue-i18n': 'VueI18n',
-  //   'bootstrap': 'jQuery'
-  // }
+  externals: {
+    'vue': 'Vue',
+    'vuex': 'Vuex',
+    'vue2-datepicker': 'DatePicker',
+    'vue-router': 'VueRouter',
+    'jquery': 'jQuery',
+    'vue-i18n': 'VueI18n',
+    'bootstrap': 'jQuery'
+  }
 };

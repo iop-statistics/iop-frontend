@@ -5,6 +5,9 @@
   margin-bottom: 10px;
 }
 #mutiLang .btn {
+  font-size: 0.75rem;
+}
+#mutiLang button.btn {
   font-size: 1rem;
 }
 .navbar-brand img {
@@ -30,7 +33,7 @@
       </div>
     </header>
     <div id="mutiLang" class="container py-3">
-      <div class="row justify-content-between">
+      <div class="row justify-content-between align-items-center">
         <div class="btn-group btn-group-toggle">
           <router-link
             to="/home"
