@@ -11,9 +11,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 
 module.exports = {
-  // mode: 'development',
+  mode: 'development',
   /******************************/
-  mode: 'production',
+  // mode: 'production',
   devtool: 'cheap-module-source-map',
   entry: path.join(__dirname, './src/main.js'),
   output: {

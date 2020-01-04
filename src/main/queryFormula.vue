@@ -129,8 +129,9 @@ export default {
     checkUrl() {
       if (this.checkPara() || !this.$router.fullpath === "/formula") {
         this.$router.push({ path: "/home" });
-        return;
+        return true;
       }
+      return false;
     },
 
     checkPara() {
@@ -354,7 +355,6 @@ export default {
     //   .then(res => {
     //     console.log(res);
     //   });
-    this.checkUrl();
     // this.$getStandardDate();
     // this.$getInfo()
     //   .then(res => {
@@ -366,7 +366,16 @@ export default {
     //   .then(res => {
     //     this.queryProduct();
     //   });
-    this.queryProduct();
+
+    new Promise((resolve, reject) => {
+      var s = _this.checkUrl();
+      if (s) reject("err");
+      resolve();
+    })
+      .then(() => {
+        this.queryProduct();
+      })
+      .catch(err => {});
   }
   // activated() {
   //   this.queryProduct();

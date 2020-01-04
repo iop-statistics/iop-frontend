@@ -40,7 +40,7 @@
             class="btn btn-secondary"
             tag="button"
             v-if="$route.fullPath!='/home'"
-          ><返回首页</router-link>
+          >{{$t("app.back")}}</router-link>
         </div>
         <div class="btn-group btn-group-toggle">
           <label class="btn btn-secondary" :class="{'active': langFlag==1}" @click="langFlag=1">

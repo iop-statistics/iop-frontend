@@ -235,7 +235,7 @@ export default {
     }
   },
   created() {
-    var _this = this;
+    // var _this = this;
     // var promise = new Promise((resolve, reject) => {
     //   if (!_this.$store.state.flag.info) {
     //     _this.$getInfo();

@@ -112,6 +112,7 @@ thead tr th:hover {
 import comment from "./comment.vue";
 import DatePicker from "vue2-datepicker";
 import { mapState } from "vuex";
+import { reject } from "q";
 export default {
   data() {
     return {
@@ -131,12 +132,14 @@ export default {
     checkUrl() {
       if (this.$route.fullPath != "/id" || this.checkPara()) {
         this.$router.push({ path: "/home" });
-        return;
+        return true;
       }
+      return false;
     },
 
     checkPara() {
       var { type, id } = this.queryID;
+      id = parseInt(id);
       try {
         if (type === "tdoll" || type === "fairy" || type === "equip") {
           if (typeof id === "number" && id > 0) {
@@ -369,8 +372,16 @@ export default {
     //     this.queryFormula();
     //   });
     // console.log(this.$store.state.dic);
-    this.checkUrl();
-    this.queryFormula();
+    new Promise((resolve, reject) => {
+      var s = this.checkUrl();
+      if (s) reject("err");
+      resolve();
+    })
+      .then(() => {
+        this.queryFormula();
+      })
+      .catch(err => {});
+
     // console.log(this.$query_obj);
   }
   // activated() {
