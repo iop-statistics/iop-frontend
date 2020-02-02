@@ -71,7 +71,7 @@ thead tr th:hover {
           </div>
         </div>
       </div>
-      <table class="table">
+      <table class="table" v-show="renderFlag===1">
         <thead>
           <tr>
             <th>{{$t('query.order')}}</th>
@@ -99,8 +99,12 @@ thead tr th:hover {
           </tr>
         </tbody>
       </table>
+      <div class="text-center">
+        <h2 v-show="renderFlag===0">No Data Found</h2>
+        <h2 v-show="renderFlag===2">Loading....</h2>
+      </div>
       <hr />
-      <comment></comment>
+      <comment :uri="`${queryID.type}_${queryID.id}`"></comment>
       <hr />
     </div>
   </div>
@@ -113,6 +117,7 @@ import comment from "./comment.vue";
 import DatePicker from "vue2-datepicker";
 import { mapState } from "vuex";
 import { reject } from "q";
+import queryFormulaVue from "./queryFormula.vue";
 export default {
   data() {
     return {
@@ -121,7 +126,8 @@ export default {
       date_span: [],
       // today: "",
       sort: { current: 7, order: -1 },
-      filterFlag: 3
+      filterFlag: 3,
+      renderFlag: 2
     };
   },
   components: {
@@ -152,6 +158,24 @@ export default {
       return true; //true means corrupted data
     },
 
+    installData() {
+      if (this.data === null) {
+        this.renderFlag = 0;
+        return;
+      }
+      this.data.forEach(ele => {
+        try {
+          Object.assign(ele, {
+            rate: new Number((ele.count / ele.total) * 100).toFixed(3)
+          });
+        } catch {
+          console.log("reg parse failed");
+        }
+      });
+      this.sorted_data = Array.from(this.data);
+      this.renderFlag = 1;
+    },
+
     queryFormula() {
       var _this = this;
       this.$ajax
@@ -161,30 +185,28 @@ export default {
         })
         .then(res => {
           if (res == undefined) {
+            this.renderFlag = 0;
             return;
           }
           if (res.status == 200) {
             this.data = res.data.data.data;
-            this.data.forEach(ele => {
-              Object.assign(ele, {
-                rate: new Number((ele.count / ele.total) * 100).toFixed(3)
-              });
-            });
-            this.sorted_data = Array.from(this.data);
+            this.installData();
           }
         });
     },
 
     queryTime() {
       var _this = this;
+      this.renderFlag = 2;
       //time query only enabled here
       var { type, id } = this.queryID;
       if (
-        this.date_span.length < 2 ||
-        this.date_span[0] == null ||
-        this.data[1] == null
+        this.date_span.length < 2 //||
+        //this.data[1] == null
       ) {
         return;
+      } else if (this.date_span[0] == null) {
+        this.queryFormula();
       } else {
         var from =
           this.date_span[0].getFullYear() +
@@ -204,8 +226,13 @@ export default {
           .get("/stats/id", param)
           .then(res => {
             // console.log(res);
+            if (res == undefined) {
+              this.renderFlag = 0;
+              return;
+            }
             if (res.status == 200) {
               this.data = res.data.data.data;
+              this.installData();
               this.reSort();
               return 1;
             }

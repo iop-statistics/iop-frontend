@@ -2,18 +2,62 @@
 </style>
 
 <template>
-  <div>
-    <h1>This is the comment part</h1>
+  <div id="comment">
+    <section id="isso-thread" :data-isso-id="uri"></section>
   </div>
 </template>
 
 <script>
 export default {
   name: "comment",
-  methods: {
-    post() {
-      this.$http.post();
+  methods: {},
+  props: {
+    uri: String
+  },
+  watch: {
+    commentElements(val) {
+      if (val === 6) {
+        f = getElementById("isso-thread");
+        for (var i = 3; i < 6; i++) {
+          f.removeChild(childs[i]);
+        }
+      }
     }
+  },
+  computed: {
+    commentElements() {
+      return document.getElementById("isso-thread").childElementCount;
+    }
+  },
+  mounted() {
+    // console.log(this.url);
+    // document.onload = function() {
+    const parent = document.getElementById("comment");
+    if (parent.childElementCount === 1) {
+      const script = document.createElement("script");
+      script.setAttribute("data-isso", "http://db.baka.pw:8898/comment/");
+      script.setAttribute("data-isso-id", "thread-id");
+      script.setAttribute("data-isso-lang", "kr");
+      script.setAttribute("data-isso-css", "true");
+      script.setAttribute("data-isso-reply-to-self", "false");
+      script.setAttribute("data-isso-require-author", "true");
+      script.setAttribute("data-isso-require-email", "false");
+      script.setAttribute("data-isso-max-comments-top", "10");
+      script.setAttribute("data-isso-max-comments-nested", "2");
+      script.setAttribute("data-isso-reveal-on-click", "5");
+      script.setAttribute("data-isso-avatar", "true");
+      // script.setAttribute("data-isso-bg", "true");
+      // script.setAttribute("data-isso-fg", "true");
+      script.setAttribute("data-vote", "true");
+      script.setAttribute("data-isso-vote-levels", "");
+      script.setAttribute("data-isso-feed", "false");
+      script.setAttribute(
+        "src",
+        "http://db.baka.pw:8898/comment/js/embed.min.js"
+      );
+      parent.appendChild(script);
+    }
+    // };
   }
 };
 </script>

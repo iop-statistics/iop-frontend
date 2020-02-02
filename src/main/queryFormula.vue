@@ -59,7 +59,7 @@ thead tr th:hover {
           </div>
         </div>
       </div>
-      <table class="table">
+      <table class="table" v-show="renderFlag===1">
         <thead>
           <tr>
             <th>{{$t('query_formula.order')}}</th>
@@ -81,7 +81,7 @@ thead tr th:hover {
             <td>{{i+1}}</td>
             <td>{{ele.id}}</td>
             <td
-              v-if="queryFormula.type==='tdoll'"
+              v-if="queryFormula.type==='tdoll' || queryFormula.type==='equip'"
               :class="{'n':ele.rank==2,
                        'r':ele.rank==3,              'sr':ele.rank==4,             'ssr':ele.rank==5}"
             >
@@ -99,8 +99,14 @@ thead tr th:hover {
           </tr>
         </tbody>
       </table>
+      <div class="text-center">
+        <h2 v-show="renderFlag===0">No Data Found</h2>
+        <h2 v-show="renderFlag===2">Loading....</h2>
+      </div>
       <hr />
-      <comment></comment>
+      <comment
+        :uri="`${queryFormula.type}_${queryFormula.mp}_${queryFormula.ammo}_${queryFormula.mre}_${queryFormula.part}_${queryFormula.input_level}}`"
+      ></comment>
       <hr />
     </div>
   </div>
@@ -122,7 +128,8 @@ export default {
       sorted_data: {},
       date_span: [],
       sort: { current: 6, order: -1 },
-      filterFlag: 3
+      filterFlag: 3,
+      renderFlag: 2
     };
   },
   methods: {
@@ -164,67 +171,47 @@ export default {
       return true;
     },
 
-    queryProduct() {
-      var { type, mp, ammo, mre, part, input_level } = this.queryFormula;
-      var _this = this;
-      this.$ajax
-        .get("/stats/formula", {
-          type,
-          mp,
-          ammo,
-          mre,
-          part,
-          input_level
-        })
-        .then(res => {
-          if (res == undefined) {
-            return;
-          }
-          if (res.status == 200) {
-            this.data = res.data.data.data;
-            this.sorted_data = Array.from(this.data);
-            this.formatData();
-          }
-        });
-    },
-
-    formatData() {
+    installData() {
+      this.sorted_data = Array.from(this.data);
+      if (this.data === null) {
+        this.renderFlag = 0;
+        console.log(2);
+        return;
+      }
       var _this = this;
       this.sorted_data.forEach(ele => {
-        if (_this.queryFormula.type === "tdoll") {
+        try {
+          if (_this.queryFormula.type === "tdoll") {
+            Object.assign(ele, {
+              rank: _this.dic.tdoll[ele.id].rank,
+              name: _this.dic.tdoll[ele.id].cn_name.split("|")[0],
+              devTime: _this.dic.tdoll[ele.id].develop_duration,
+              type: "tdoll"
+            });
+          } else if (ele.type === 1) {
+            Object.assign(ele, {
+              rank: parseInt(_this.dic.equip[ele.id].rank),
+              name: _this.dic.equip[ele.id].cn_name,
+              devTime: _this.dic.equip[ele.id].develop_duration,
+              type: "equip"
+            });
+          } else if (ele.type === 2) {
+            Object.assign(ele, {
+              rank: parseInt(_this.dic.fairy[ele.id].rank),
+              name: _this.dic.fairy[ele.id].cn_name,
+              devTime: _this.dic.fairy[ele.id].develop_duration,
+              type: "fairy"
+            });
+          }
           Object.assign(ele, {
-            rank: _this.dic.tdoll[ele.id].rank,
-            name: _this.dic.tdoll[ele.id].cn_name.split("|")[0],
-            devTime: _this.dic.tdoll[ele.id].develop_duration,
-            type: "tdoll"
+            rate: new Number((ele.count / _this.currentTotal) * 100).toFixed(3)
           });
-          // ele.rank = _this.dic.tdoll[ele.id].rank;
-          // ele.name = _this.dic.tdoll[ele.id].cn_name;
-          // ele.devTime = _this.dic.tdoll[ele.id].develop_duration;
-        } else if (ele.type === 1) {
-          Object.assign(ele, {
-            rank: _this.dic.equip[ele.id].rank,
-            name: _this.dic.equip[ele.id].cn_name,
-            devTime: _this.dic.equip[ele.id].develop_duration
-          });
-          // ele.rank = _this.dic.equip[ele.id].rank;
-          // ele.name = _this.dic.equip[ele.id].cn_name;
-          // ele.devTime = _this.dic.equip[ele.id].develop_duration;
-        } else if (ele.type === 2) {
-          Object.assign(ele, {
-            rank: _this.dic.fairy[ele.id].rank,
-            name: _this.dic.fairy[ele.id].cn_name,
-            devTime: _this.dic.fairy[ele.id].develop_duration
-          });
-          // ele.rank = _this.dic.fairy[ele.id9].rank;
-          // ele.name = _this.dic.fairy[ele.id].cn_name;
-          // ele.devTime = _this.dic.fairy[ele.id].develop_duration;
+        } catch {
+          console.log("parse failed");
         }
-        Object.assign(ele, {
-          rate: new Number((ele.count / _this.currentTotal) * 100).toFixed(3)
-        });
       });
       console.log(this.sorted_data);
+      this.renderFlag = 1;
     },
 
     changeSort(code) {
@@ -268,16 +255,38 @@ export default {
       }
     },
 
+    queryProduct() {
+      var { type, mp, ammo, mre, part, input_level } = this.queryFormula;
+      var _this = this;
+      this.$ajax
+        .get("/stats/formula", {
+          type,
+          mp,
+          ammo,
+          mre,
+          part,
+          input_level
+        })
+        .then(res => {
+          if (res == undefined) {
+            return;
+          }
+          if (res.status == 200) {
+            this.data = res.data.data.data;
+            this.installData();
+          }
+        });
+    },
+
     queryTime() {
+      this.renderFlag = 2;
       var _this = this;
       //time query only enabled here
       var { type, mp, ammo, mre, part, input_level } = this.queryFormula;
-      if (
-        this.date_span.length < 2 ||
-        this.date_span[0] == null ||
-        this.data[1] == null
-      ) {
+      if (this.date_span.length < 2) {
         return;
+      } else if (this.date_span[0] == null) {
+        this.queryProduct();
       } else {
         var from =
           this.date_span[0].getFullYear() +
@@ -303,8 +312,7 @@ export default {
             // console.log(res);
             if (res.status == 200) {
               this.data = res.data.data.data;
-              this.sorted_data = Array.from(this.data);
-              this.formatData();
+              this.installData();
               this.reSort();
               return 1;
             }
@@ -368,7 +376,7 @@ export default {
     //   });
 
     new Promise((resolve, reject) => {
-      var s = _this.checkUrl();
+      var s = this.checkUrl();
       if (s) reject("err");
       resolve();
     })

@@ -7,6 +7,7 @@
     "bootstrap": "^4.3.1",
     "font-awesome": "^4.6.3",
     "jquery": "^3.4.1",
+    "owo": "^1.0.2",
     "popper.js": "^1.15.0",
     "vue": "^2.6.10",
     "vue-i18n": "^8.14.1",
@@ -65,7 +66,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev2": "webpack-dev-server --open --port 3000 --contentBase src ",
+    "dev2": "webpack-dev-server --open --port 3000 --contentBase src --mode development",
     "dev": "webpack-dev-server",
     "analyze": "NODE_ENV=production npm_config_report=npm run build --hot",
     "build": "webpack --progress --hide-modules --mode production --inline=false"
