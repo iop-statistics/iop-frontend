@@ -1,6 +1,6 @@
 module.exports = {
   app: {
-    'header': 'IOP制造公司出货统计 3.5 BETA',
+    'header': 'IOP制造公司出货统计 4.0 BETA',
     'back': '<返回首页'
   },
   home: {

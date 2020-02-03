@@ -22,7 +22,7 @@
 <template>
   <div>
     <header id="menu">
-      <div class="container">
+      <div class="container overflow-scroll">
         <!-- <div class="row"> -->
         <router-link to="/" class="navbar-brand">
           <img src="../assets/iop.jpg" alt srcset />
@@ -33,8 +33,10 @@
       </div>
     </header>
     <div id="mutiLang" class="container py-3">
-      <div class="row justify-content-between align-items-center">
-        <div class="btn-group btn-group-toggle">
+      <div
+        class="row align-items-sm-center justify-content-center justify-content-sm-between flex-column flex-sm-row"
+      >
+        <div class="btn-group btn-group-toggle pb-2 pb-sm-0">
           <router-link
             to="/home"
             class="btn btn-secondary"

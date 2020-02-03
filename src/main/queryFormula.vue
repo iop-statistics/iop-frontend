@@ -34,13 +34,18 @@ tbody tr:hover,
 thead tr th:hover {
   background: #f5f5f5;
 }
+.overflow-scroll {
+  overflow: scroll hidden;
+}
 </style>
 
 <template>
   <div>
     <div class="container">
-      <div class="pb-4">
-        <div class="row justify-content-between align-items-end">
+      <div class="pb-2">
+        <div
+          class="row justify-content-between align-items-sm-end aligm-items-start flex-column flex-sm-row"
+        >
           <div>
             <h4 class="pb-3">{{formulaDisplay +$t('query_formula.tier')}}</h4>
             <h5 class="pb-2">{{$t('query_formula.total',{msg:this.currentTotal})}}</h5>
@@ -54,51 +59,59 @@ thead tr th:hover {
               :confirm="true"
               :shortcuts="false"
               :editable="false"
+              style="width:auto"
             ></date-picker>
-            <button class="btn btn-secondary ml-1" @click="queryTime()">{{$t('query.search')}}</button>
+            <button
+              class="btn btn-secondary ml-1"
+              :disabled="renderFlag===2"
+              @click="queryTime()"
+            >{{$t('query.search')}}</button>
           </div>
         </div>
       </div>
-      <table class="table" v-show="renderFlag===1">
-        <thead>
-          <tr>
-            <th>{{$t('query_formula.order')}}</th>
-            <th
-              v-if="queryFormula.type=='tdoll'"
-              @click="changeSort(1)"
-            >{{$t('query_formula.tdoll_order')}}</th>
-            <th v-else @click="changeSort(1)">{{$t('query_formula.equip_order')}}</th>
 
-            <th @click="changeSort(2)">{{$t('query_formula.rank')}}</th>
-            <th>{{$t('query_formula.tdoll')}}</th>
-            <th @click="changeSort(3)">{{$t('query_formula.dev_time')}}</th>
-            <th @click="changeSort(4)">{{$t('query_formula.hits')}}</th>
-            <th @click="changeSort(5)">{{$t('query_formula.rate')}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(ele,i) in sorted_data" :key="i" @click="toProduct(ele.type,ele.id)">
-            <td>{{i+1}}</td>
-            <td>{{ele.id}}</td>
-            <td
-              v-if="queryFormula.type==='tdoll' || queryFormula.type==='equip'"
-              :class="{'n':ele.rank==2,
+      <div class="overflow-scroll w-100">
+        <table class="table" v-show="renderFlag===1">
+          <thead>
+            <tr>
+              <th>{{$t('query_formula.order')}}</th>
+              <th
+                v-if="queryFormula.type=='tdoll'"
+                @click="changeSort(1)"
+              >{{$t('query_formula.tdoll_order')}}</th>
+              <th v-else @click="changeSort(1)">{{$t('query_formula.equip_order')}}</th>
+
+              <th @click="changeSort(2)">{{$t('query_formula.rank')}}</th>
+              <th>{{$t('query_formula.tdoll')}}</th>
+              <th @click="changeSort(3)">{{$t('query_formula.dev_time')}}</th>
+              <th @click="changeSort(4)">{{$t('query_formula.hits')}}</th>
+              <th @click="changeSort(5)">{{$t('query_formula.rate')}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ele,i) in sorted_data" :key="i" @click="toProduct(ele.type,ele.id)">
+              <td>{{i+1}}</td>
+              <td>{{ele.id}}</td>
+              <td
+                v-if="queryFormula.type==='tdoll' || queryFormula.type==='equip'"
+                :class="{'n':ele.rank==2,
                        'r':ele.rank==3,              'sr':ele.rank==4,             'ssr':ele.rank==5}"
-            >
-              <span v-for="n in ele.rank" :key="n" class="icon-star"></span>
-            </td>
-            <td>{{ele.name}}</td>
-            <td>
-              {{parseDevSec(ele.devTime).map(ele =>
-              ele.toString().length == 1 ? "0" + ele.toString() : ele.toString()
-              )
-              .join(":")}}
-            </td>
-            <td>{{ele.count}}</td>
-            <td>{{ele.rate+'%'}}</td>
-          </tr>
-        </tbody>
-      </table>
+              >
+                <span v-for="n in ele.rank" :key="n" class="icon-star"></span>
+              </td>
+              <td>{{ele.name}}</td>
+              <td>
+                {{parseDevSec(ele.devTime).map(ele =>
+                ele.toString().length == 1 ? "0" + ele.toString() : ele.toString()
+                )
+                .join(":")}}
+              </td>
+              <td>{{ele.count}}</td>
+              <td>{{ele.rate+'%'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="text-center">
         <h2 v-show="renderFlag===0">No Data Found</h2>
         <h2 v-show="renderFlag===2">Loading....</h2>
@@ -129,7 +142,8 @@ export default {
       date_span: [],
       sort: { current: 6, order: -1 },
       filterFlag: 3,
-      renderFlag: 2
+      renderFlag: 2,
+      currentTotal: 0
     };
   },
   methods: {
@@ -172,12 +186,16 @@ export default {
     },
 
     installData() {
-      this.sorted_data = Array.from(this.data);
+      this.currentTotal = 0;
       if (this.data === null) {
         this.renderFlag = 0;
-        console.log(2);
+        // console.log(2);
         return;
       }
+      this.sorted_data = Array.from(this.data);
+      this.data.forEach(ele => {
+        this.currentTotal += ele.count;
+      });
       var _this = this;
       this.sorted_data.forEach(ele => {
         try {
@@ -210,7 +228,7 @@ export default {
           console.log("parse failed");
         }
       });
-      console.log(this.sorted_data);
+      // console.log(this.sorted_data);
       this.renderFlag = 1;
     },
 
@@ -283,9 +301,7 @@ export default {
       var _this = this;
       //time query only enabled here
       var { type, mp, ammo, mre, part, input_level } = this.queryFormula;
-      if (this.date_span.length < 2) {
-        return;
-      } else if (this.date_span[0] == null) {
+      if (this.date_span.length < 2 || this.date_span[0] == null) {
         this.queryProduct();
       } else {
         var from =
@@ -345,7 +361,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["today", "queryFormula", "currentTotal", "dic"]),
+    ...mapState(["today", "queryFormula", "dic"]),
     formulaDisplay() {
       var { mp, ammo, mre, part, input_level } = this.queryFormula;
       return [mp, ammo, mre, part, input_level].join(" ");

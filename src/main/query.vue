@@ -30,8 +30,8 @@ thead tr th:hover {
           <h4 class="pb-3">{{cn_name +' '+$t('query.time')}}</h4>
           <h5 class="pb-2">{{$t('query.dev_time')+": "+dev_time}}</h5>
         </div>
-        <div class="row justify-content-between">
-          <div class="btn-group btn-group-toggle">
+        <div class="row justify-content-center justify-content-md-between flex-column flex-md-row">
+          <div class="btn-group btn-group-toggle mb-2">
             <label
               class="btn btn-secondary"
               :class="{'active': filterFlag==1}"
@@ -57,7 +57,7 @@ thead tr th:hover {
               {{$t('query.show_all')}}
             </label>
           </div>
-          <div class="row">
+          <div class="row mb-2">
             <date-picker
               v-model="date_span"
               range
@@ -66,39 +66,47 @@ thead tr th:hover {
               :confirm="true"
               :shortcuts="false"
               :editable="false"
+              style="width:auto"
             ></date-picker>
-            <button class="btn btn-secondary ml-1" @click="queryTime()">{{$t('query.search')}}</button>
+            <button
+              class="btn btn-secondary ml-1"
+              :disabled="renderFlag===2"
+              @click="queryTime()"
+            >{{$t('query.search')}}</button>
           </div>
         </div>
       </div>
-      <table class="table" v-show="renderFlag===1">
-        <thead>
-          <tr>
-            <th>{{$t('query.order')}}</th>
-            <th @click="changeSort(1)">{{$t('query.mp')}}</th>
-            <th @click="changeSort(2)">{{$t('query.amm')}}</th>
-            <th @click="changeSort(3)">{{$t('query.mre')}}</th>
-            <th @click="changeSort(4)">{{$t('query.part')}}</th>
-            <th @click="changeSort(5)">{{$t('query.tier')}}</th>
-            <th @click="changeSort(6)">{{$t('query.hits')}}</th>
-            <th @click="changeSort(7)">{{$t('query.attempt')}}</th>
-            <th @click="changeSort(8)">{{$t('query.rate')}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(ele,i) in sorted_data" :key="i" @click="toFormula(ele.total,ele.formula)">
-            <td>{{i+1}}</td>
-            <td>{{ele.formula.mp}}</td>
-            <td>{{ele.formula.ammo}}</td>
-            <td>{{ele.formula.mre}}</td>
-            <td>{{ele.formula.part}}</td>
-            <td>{{ele.formula.input_level}}</td>
-            <td>{{ele.count}}</td>
-            <td>{{ele.total}}</td>
-            <td>{{ele.rate+'%'}}</td>
-          </tr>
-        </tbody>
-      </table>
+
+      <div class="overflow-scroll w-100">
+        <table class="table" v-show="renderFlag===1">
+          <thead>
+            <tr>
+              <th>{{$t('query.order')}}</th>
+              <th @click="changeSort(1)">{{$t('query.mp')}}</th>
+              <th @click="changeSort(2)">{{$t('query.amm')}}</th>
+              <th @click="changeSort(3)">{{$t('query.mre')}}</th>
+              <th @click="changeSort(4)">{{$t('query.part')}}</th>
+              <th @click="changeSort(5)">{{$t('query.tier')}}</th>
+              <th @click="changeSort(6)">{{$t('query.hits')}}</th>
+              <th @click="changeSort(7)">{{$t('query.attempt')}}</th>
+              <th @click="changeSort(8)">{{$t('query.rate')}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ele,i) in sorted_data" :key="i" @click="toFormula(ele.total,ele.formula)">
+              <td>{{i+1}}</td>
+              <td>{{ele.formula.mp}}</td>
+              <td>{{ele.formula.ammo}}</td>
+              <td>{{ele.formula.mre}}</td>
+              <td>{{ele.formula.part}}</td>
+              <td>{{ele.formula.input_level}}</td>
+              <td>{{ele.count}}</td>
+              <td>{{ele.total}}</td>
+              <td>{{ele.rate+'%'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="text-center">
         <h2 v-show="renderFlag===0">No Data Found</h2>
         <h2 v-show="renderFlag===2">Loading....</h2>
@@ -200,12 +208,7 @@ export default {
       this.renderFlag = 2;
       //time query only enabled here
       var { type, id } = this.queryID;
-      if (
-        this.date_span.length < 2 //||
-        //this.data[1] == null
-      ) {
-        return;
-      } else if (this.date_span[0] == null) {
+      if (this.date_span.length < 2 || this.date_span[0] == null) {
         this.queryFormula();
       } else {
         var from =

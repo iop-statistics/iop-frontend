@@ -17,16 +17,13 @@ export default {
   watch: {
     commentElements(val) {
       if (val === 6) {
-        f = getElementById("isso-thread");
-        for (var i = 3; i < 6; i++) {
-          f.removeChild(childs[i]);
-        }
+        try {
+          var f = getElementById("isso-thread");
+          for (var i = 3; i < 6; i++) {
+            f.removeChild(childs[i]);
+          }
+        } catch {}
       }
-    }
-  },
-  computed: {
-    commentElements() {
-      return document.getElementById("isso-thread").childElementCount;
     }
   },
   mounted() {
@@ -55,7 +52,9 @@ export default {
         "src",
         "http://db.baka.pw:8898/comment/js/embed.min.js"
       );
-      parent.appendChild(script);
+      this.$nextTick(() => {
+        parent.appendChild(script);
+      });
     }
     // };
   }

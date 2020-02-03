@@ -1,5 +1,8 @@
 <template>
-  <div class="container-fluid" style="padding:0px;min-height:100%;position:relative">
+  <div
+    class="container-fluid"
+    style="padding:0px;min-height:100%;position:relative;overflow:hidden;"
+  >
     <pageHeader></pageHeader>
     <keep-alive include="home">
       <router-view style="padding-bottom:141px"></router-view>
@@ -38,6 +41,31 @@ html {
 html,
 body {
   height: 100%;
+}
+
+.overflow-scroll {
+  overflow: scroll hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overflow-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mx-datepicker {
+  flex: 1;
+  max-width: 496px;
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 5px !important;
+  }
+  div.mx-range-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
 }
 
 /* hr {
