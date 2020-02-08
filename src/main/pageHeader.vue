@@ -45,16 +45,32 @@
           >{{$t("app.back")}}</router-link>
         </div>
         <div class="btn-group btn-group-toggle">
-          <label class="btn btn-secondary" :class="{'active': langFlag==1}" @click="langFlag=1">
+          <label
+            class="btn btn-secondary"
+            :class="{'active': langFlag=='zh'}"
+            @click="langFlag='zh'"
+          >
             <input type="radio" name="options" id="option1" autocomplete="off" /> 简体中文
           </label>
-          <label class="btn btn-secondary" :class="{'active': langFlag==2}" @click="langFlag=2">
+          <label
+            class="btn btn-secondary"
+            :class="{'active': langFlag=='en'}"
+            @click="langFlag='en'"
+          >
             <input type="radio" name="options" id="option2" autocomplete="off" /> English
           </label>
-          <label class="btn btn-secondary" :class="{'active': langFlag==3}" @click="langFlag=3">
+          <label
+            class="btn btn-secondary"
+            :class="{'active': langFlag=='kr'}"
+            @click="langFlag='kr'"
+          >
             <input type="radio" name="options" id="option3" autocomplete="off" /> 한국어
           </label>
-          <label class="btn btn-secondary" :class="{'active': langFlag==4}" @click="langFlag=4">
+          <label
+            class="btn btn-secondary"
+            :class="{'active': langFlag=='jp'}"
+            @click="langFlag='jp'"
+          >
             <input type="radio" name="options" id="option3" autocomplete="off" /> 日本語
           </label>
         </div>
@@ -68,28 +84,35 @@ export default {
   name: "pageHeader",
   data() {
     return {
-      langFlag: 1
+      langFlag: String
     };
   },
-  methods: {},
+  methods: {
+    setLocalStorage(str) {
+      if (["zh", "en", "kr", "jp"].indexOf(str) != -1) {
+        localStorage.setItem("locale", str);
+      }
+    },
+    getLocalStorage() {
+      const locale = localStorage.getItem("locale");
+      if (["zh", "en", "kr", "jp"].indexOf(locale) != -1) {
+        this.$i18n.locale = this.langFlag = locale;
+      } else {
+        this.$i18n.locale = this.langFlag = "zh";
+      }
+    }
+  },
   watch: {
     langFlag(val) {
-      if (val == 1) {
-        this.$i18n.locale = "zh";
-      }
-      if (val == 2) {
-        this.$i18n.locale = "en";
-      }
-      if (val == 3) {
-        this.$i18n.locale = "kr";
-      }
-      if (val == 4) {
-        this.$i18n.locale = "jp";
+      if (["zh", "en", "kr", "jp"].indexOf(val) != -1) {
+        this.$i18n.locale = val;
+        this.setLocalStorage(val);
       }
       document.title = this.$t("app.header").slice(0, -8);
     }
   },
   created() {
+    this.getLocalStorage();
     document.title = this.$t("app.header").slice(0, -8);
   }
 };

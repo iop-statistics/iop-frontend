@@ -108,8 +108,8 @@ thead tr th:hover {
         </table>
       </div>
       <div class="text-center">
-        <h2 v-show="renderFlag===0">No Data Found</h2>
-        <h2 v-show="renderFlag===2">Loading....</h2>
+        <h2 v-show="renderFlag===0">{{$t('app.not_found')}}</h2>
+        <h2 v-show="renderFlag===2">{{$t('app.loading')}}</h2>
       </div>
       <hr />
       <comment :uri="`${queryID.type}_${queryID.id}`"></comment>

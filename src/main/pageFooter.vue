@@ -28,7 +28,11 @@
       <!-- Button trigger modal -->
       <div class="row justify-content-between">
         <div>
-          <a href="javascript:void(0);" data-toggle="modal" data-target="#modelId">关于本站</a>
+          <a
+            href="javascript:void(0);"
+            data-toggle="modal"
+            data-target="#modelId"
+          >{{$t('app.about')}}</a>
         </div>
         <div>
           <p class="m-0 grey">Powered by GFDB</p>
@@ -49,7 +53,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">About</h5>
+              <h5 class="modal-title">{{$t('app.about')}}</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

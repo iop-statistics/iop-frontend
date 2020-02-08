@@ -1,7 +1,10 @@
 module.exports = {
   app: {
-    'header': 'IOP制造公司出货统计 4.0 BETA',
-    'back': '<返回首页'
+    header: 'IOP制造公司出货统计 4.0 BETA',
+    back: '返回首页',
+    not_found: '没有查询到数据',
+    loading: '加载中....',
+    about: '关于本站',
   },
   home: {
     notification: '通知',

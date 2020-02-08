@@ -34,7 +34,7 @@ export default {
       const script = document.createElement("script");
       script.setAttribute("data-isso", "http://db.baka.pw:8898/comment/");
       script.setAttribute("data-isso-id", "thread-id");
-      script.setAttribute("data-isso-lang", "kr");
+      script.setAttribute("data-isso-lang", this.$i18n.locale);
       script.setAttribute("data-isso-css", "true");
       script.setAttribute("data-isso-reply-to-self", "false");
       script.setAttribute("data-isso-require-author", "true");

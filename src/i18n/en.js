@@ -1,6 +1,10 @@
 module.exports = {
   app: {
-    header: 'IOP Corporation Manufactoring Statistic 3.5 BETA'
+    header: 'IOP Corporation Manufactoring Statistic 4.0 BETA',
+    back: 'Return to list',
+    not_found: 'No Data Found',
+    loading: "Loading....",
+    about: 'About',
   },
   home: {
     notification: 'Notification',
@@ -24,6 +28,35 @@ module.exports = {
 
     }
   },
-  query: {},
-  query_formula: {}
+  query: {
+    back: 'Return to list',
+    time: '\'s total production data:',
+    dev_time: 'Production Time',
+    normal: 'NORMAL',
+    heavy: 'HEAVY',
+    show_all: 'ALL',
+    order: '序号',
+    mp: 'Manpower',
+    amm: 'Ammo',
+    mre: 'Rations',
+    part: 'Parts',
+    tier: 'Tier',
+    hits: 'Hits',
+    attempt: 'Attempts',
+    rate: 'Rate',
+    search: 'Search'
+  },
+  query_formula: {
+    tier: '\'s total production data:',
+    total: 'A total of {msg} results found.',
+    order: 'Index number',
+    tdoll_order: 'T-Doll No.',
+    equip_order: 'Equip No.',
+    rank: 'Rank',
+    tdoll: 'T-Doll',
+    equip: 'Equip',
+    dev_time: 'Production Time',
+    hits: 'Hits',
+    rate: 'Rate',
+  }
 }
